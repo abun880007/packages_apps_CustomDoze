@@ -67,6 +67,7 @@ public class DozeSettings extends PreferenceActivity implements PreferenceFragme
         private PreferenceCategory mTiltCategory;
         private PreferenceCategory mProximitySensorCategory;
         private SwitchPreference mAoDPreference;
+        private SwitchPreference mDozeOnChargePreference;
         private SwitchPreference mAmbientDisplayPreference;
         private SwitchPreference mPickUpPreference;
         private SwitchPreference mHandwavePreference;
@@ -97,6 +98,11 @@ public class DozeSettings extends PreferenceActivity implements PreferenceFragme
                 (SwitchPreference) findPreference(Utils.AMBIENT_DISPLAY_KEY);
             mAmbientDisplayPreference.setChecked(Utils.isDozeEnabled(mContext));
             mAmbientDisplayPreference.setOnPreferenceChangeListener(this);
+
+            mDozeOnChargePreference =
+                (SwitchPreference) findPreference(Utils.DOZE_ON_CHARGE);
+            mDozeOnChargePreference.setChecked(Utils.dozeOnChargeEnabled(mContext));
+            mDozeOnChargePreference.setOnPreferenceChangeListener(this);
 
             mPickUpPreference =
                 (SwitchPreference) findPreference(Utils.PICK_UP_KEY);
@@ -130,6 +136,7 @@ public class DozeSettings extends PreferenceActivity implements PreferenceFragme
                 (PreferenceCategory) findPreference(KEY_CATEGORY_PROXIMITY_SENSOR);
             if (!getResources().getBoolean(R.bool.has_proximity_sensor)) {
                 getPreferenceScreen().removePreference(mProximitySensorCategory);
+                getPreferenceScreen().removePreference(mDozeOnChargePreference);
                 getPreferenceScreen().removePreference(mHandwavePreference);
                 getPreferenceScreen().removePreference(mPocketPreference);
             }
@@ -152,6 +159,10 @@ public class DozeSettings extends PreferenceActivity implements PreferenceFragme
                 mAmbientDisplayPreference.setChecked(value);
                 Utils.enableDoze(value, mContext);
                 return true;
+            } else if (Utils.DOZE_ON_CHARGE.equals(key)) {
+                mDozeOnChargePreference.setChecked(value);
+                Utils.enableDozeOnCharge(value, mContext);
+                return true;
             } else if (Utils.PICK_UP_KEY.equals(key)) {
                 mPickUpPreference.setChecked(value);
                 Utils.enablePickUp(value, mContext);
@@ -171,6 +182,7 @@ public class DozeSettings extends PreferenceActivity implements PreferenceFragme
         private void setPrefs() {
             final boolean aodEnabled = Utils.isAoDEnabled(mContext);
             mAmbientDisplayPreference.setEnabled(!aodEnabled);
+            mDozeOnChargePreference.setEnabled(!aodEnabled);
             mPickUpPreference.setEnabled(!aodEnabled);
             mHandwavePreference.setEnabled(!aodEnabled);
             mPocketPreference.setEnabled(!aodEnabled);
